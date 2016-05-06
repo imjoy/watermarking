@@ -118,6 +118,14 @@ namespace Watermark
             DCTTrans.InverseDCT(Wmblue);
             generateImage(Wmred, Wmgreen, Wmblue, Watermark.src);
             RDWTWatermark.Image = Watermark.src;
+            
+            Bitmap tmp = new Bitmap(watermarkedImg.Image);
+            DCTTrans = new DCT(Temp);
+            DCTTrans.InverseDCT(markedred);
+            DCTTrans.InverseDCT(markedgreen);
+            DCTTrans.InverseDCT(markedblue);
+            generateImage(markedred, markedgreen, markedblue, tmp);
+            watermarkedImg.Image = tmp;
         }
 
         private void InverseRDWTBTN_Click(object sender, EventArgs e)
@@ -135,6 +143,26 @@ namespace Watermark
             Transform.InverseRDWT(Wmblue);
             generateImage(Wmred, Wmgreen, Wmblue, Watermark.src);
             RDWTWatermark.Image = Watermark.src;
+
+            Transform = new rdwt();
+            Bitmap wmked = new Bitmap(watermarkedImg.Image);
+            Transform.InverseRDWT(markedred);
+            Transform.InverseRDWT(markedgreen);
+            Transform.InverseRDWT(markedblue);
+            generateImage(markedred, markedgreen, markedblue, wmked);
+            watermarkedImg.Image = wmked;
+
+            double mseRed = mse(Hostred, markedred);
+            double mseBlue = mse(Hostblue, markedblue);
+            double mseGreen = mse(Hostgreen, markedgreen);
+            double avgMSE = (mseRed + mseBlue + mseGreen) / 3.0;
+            mseLbl.Text = avgMSE.ToString();
+
+            double psnrRed = psnr(Hostred, markedred);
+            double psnrGreen = psnr(Hostgreen, markedgreen);
+            double pnsrBlue = psnr(Hostblue, markedblue);
+            double avgPsnr = (psnrRed + psnrGreen + pnsrBlue) / 3.0;
+            psnrLbl.Text = avgPsnr.ToString();
         }
 
         private void getValueColor( double[,] Red, double[,] green, double[,] blue, Bitmap src)
@@ -198,17 +226,26 @@ namespace Watermark
         private void svd_pso_Click(object sender, EventArgs e)
         {
             Watermarked = new ImageCtrl();
-            Watermarked.src = new Bitmap(RDWTImage.Image);
+            Bitmap res = new Bitmap(OriginalPic.Image, new Size(watermarkedImg.Width, watermarkedImg.Height));
             Bitmap temp = new Bitmap(RDWTImage.Image);
             Bitmap tempwm = new Bitmap(RDWTWatermark.Image);
-            markedred = Hostred;
-            markedgreen = Hostgreen;
-            markedblue = Hostblue;
-            markedred = svd_pso_operation(Hostred, Wmred, temp, tempwm);
-            markedgreen = svd_pso_operation(Hostgreen, Wmgreen, temp, tempwm);
-            markedblue = svd_pso_operation(Hostblue, Wmblue, temp, tempwm);
-            generateImage(markedred, markedgreen, markedblue, Watermarked.src);
-            RDWTImage.Image = Watermarked.src;
+            markedred = new double[Hostred.GetLength(0), Hostred.GetLength(1)];
+            markedblue = new double[Hostblue.GetLength(0), Hostblue.GetLength(1)];
+            markedgreen = new double[Hostgreen.GetLength(0), Hostgreen.GetLength(1)];
+            for (int i = 0; i < markedred.GetLength(0); i++)
+            {
+                for (int j = 0; j < markedred.GetLength(1); j++)
+                {
+                    markedred[i, j] = Hostred[i, j];
+                    markedblue[i, j] = Hostblue[i, j];
+                    markedgreen[i, j] = Hostgreen[i, j];
+                }
+            }
+            markedred = svd_pso_operation(markedred, Wmred, temp, tempwm);
+            markedgreen = svd_pso_operation(markedgreen, Wmgreen, temp, tempwm);
+            markedblue = svd_pso_operation(markedblue, Wmblue, temp, tempwm);
+            generateImage(markedred, markedgreen, markedblue,res);
+            watermarkedImg.Image = res;
         }
 
         private double[,] svd_pso_operation(double[,] hostcolor, double[,] wmcolor, Bitmap pic, Bitmap WmPic)
@@ -238,6 +275,33 @@ namespace Watermark
                 }
             }
                 return hostcolor;
+        }
+
+        private double mse(double[,] ori, double[,] wm)
+        {
+            double res = 0.0;
+            for (int i = 0; i < ori.GetLength(0); i++)
+            {
+                for (int j = 0; j < ori.GetLength(1); j++)
+                {
+                    double temp = ori[i,j]-wm[i,j];
+                    res += Math.Pow(temp, 2);
+                }
+            }
+
+            double dimensi = ori.GetLength(0) * ori.GetLength(1);
+            res /= dimensi;
+             return res;
+        }
+
+        private double psnr(double[,] ori, double[,] wm)
+        {
+            double res = 0.0;
+
+            double MSE = mse(ori, wm);
+            double temp = (ori.GetLength(0)*ori.GetLength(1))/MSE;
+            res = Math.Log10(temp);
+            return res;
         }
 
 
