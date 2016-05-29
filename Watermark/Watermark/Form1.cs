@@ -48,7 +48,12 @@ namespace Watermark
                 Hostgreen = new double[original.src.Width, original.src.Height];
                 Hostblue = new double[original.src.Width, original.src.Height];
                 getValueColor(Hostred, Hostgreen, Hostblue, original.src);
-
+                String filename = Environment.CurrentDirectory.ToString()+"\\Matriks\\HostRed.txt";
+                writeFile.sendToFile(Hostred, filename);
+                filename = Environment.CurrentDirectory.ToString() + "\\Matriks\\HostGreen.txt";
+                writeFile.sendToFile(Hostgreen, filename);
+                filename = Environment.CurrentDirectory.ToString() + "\\Matriks\\HostBlue.txt";
+                writeFile.sendToFile(Hostblue, filename);
             }
             
             //Transform = new rdwt((Image)original.src);
@@ -149,6 +154,12 @@ namespace Watermark
             Transform.InverseRDWT(markedred);
             Transform.InverseRDWT(markedgreen);
             Transform.InverseRDWT(markedblue);
+            String FileName = Environment.CurrentDirectory.ToString() + "//Matriks//MarkedRed.txt";
+            writeFile.sendToFile(markedred, FileName);
+            FileName = Environment.CurrentDirectory.ToString() + "//Matriks//MarkedGreen.txt";
+            writeFile.sendToFile(markedgreen, FileName);
+            FileName = Environment.CurrentDirectory.ToString() + "//Matriks//MarkedBlue.txt";
+            writeFile.sendToFile(markedblue, FileName);
             generateImage(markedred, markedgreen, markedblue, wmked);
             watermarkedImg.Image = wmked;
 

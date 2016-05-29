@@ -75,6 +75,7 @@
     <Compile Include="control\ImageCtrl.cs" />
     <Compile Include="control\rdwt.cs" />
     <Compile Include="control\svd_operation.cs" />
+    <Compile Include="control\writeFile.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

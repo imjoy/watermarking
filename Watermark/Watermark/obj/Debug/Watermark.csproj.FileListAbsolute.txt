@@ -127,3 +127,4 @@ E:\kari\grace\Watermark\watermarking\Watermark\Watermark\obj\Debug\Watermark.Pro
 E:\kari\grace\Watermark\watermarking\Watermark\Watermark\obj\Debug\Watermark.csproj.GenerateResource.Cache
 E:\kari\grace\Watermark\watermarking\Watermark\Watermark\obj\Debug\Watermark.exe
 E:\kari\grace\Watermark\watermarking\Watermark\Watermark\obj\Debug\Watermark.pdb
+E:\kari\grace\Watermark\watermarking\Watermark\Watermark\obj\Debug\Watermark.csprojResolveAssemblyReference.cache
