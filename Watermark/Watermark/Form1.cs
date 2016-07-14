@@ -33,6 +33,15 @@ namespace Watermark
         public double[,] markedred;
         public double[,] markedgreen;
         public double[,] markedblue;
+
+        public double[,] vtWmRed;
+        public double[,] vtWmGreen;
+        public double[,] vtWmBlue;
+
+        public double[,] sWmRed;
+        public double[,] swGreen;
+        public double[,] swBlue;
+        public Bitmap wm, host, vtwm;
         public Form1()
         {
             InitializeComponent();
@@ -252,32 +261,95 @@ namespace Watermark
                     markedgreen[i, j] = Hostgreen[i, j];
                 }
             }
-            markedred = svd_pso_operation(markedred, Wmred, temp, tempwm);
-            markedgreen = svd_pso_operation(markedgreen, Wmgreen, temp, tempwm);
-            markedblue = svd_pso_operation(markedblue, Wmblue, temp, tempwm);
+            markedred = svd_pso_operation(markedred, Wmred, temp, tempwm, vtWmRed,"red");
+            markedgreen = svd_pso_operation(markedgreen, Wmgreen, temp, tempwm, vtWmGreen,"green");
+            markedblue = svd_pso_operation(markedblue, Wmblue, temp, tempwm,vtWmBlue,"blue");
             generateImage(markedred, markedgreen, markedblue,res);
             watermarkedImg.Image = res;
         }
 
-        private double[,] svd_pso_operation(double[,] hostcolor, double[,] wmcolor, Bitmap pic, Bitmap WmPic)
+        private double[,] svd_pso_operation(double[,] hostcolor, double[,] wmcolor, Bitmap pic, Bitmap WmPic, double[,] vt , string color)
         {
             svd_host = new svd_operation(pic,hostcolor);
             svd_watermark = new svd_operation(WmPic,wmcolor);
-            double[,] pp = svd_watermark.getP();
-            for(int i=0;i < pp.GetLength(0);i++){
-                for(int j=0;j<pp.GetLength(1);j++){
-                    pp[i,j]*=0.0025;
+            vt = svd_watermark.getP();
+            for(int i=0;i < vt.GetLength(0);i++){
+                for(int j=0;j<vt.GetLength(1);j++){
+                    vt[i,j]*=0.0025;
                 }
             }
 
-            double[,] snew = new double[pp.GetLength(0), pp.GetLength(1)];
-            snew = svd_host.getnew_W(pp);
+            double[,] snew = new double[vt.GetLength(0), vt.GetLength(1)];
+            snew = svd_host.getnew_W(vt);
+            if (sWmRed == null)
+            {
+                sWmRed = new double[snew.GetLength(0), snew.GetLength(1)];
+            }
+
+            if (swGreen == null)
+            {
+                swGreen = new double[snew.GetLength(0), snew.GetLength(1)];
+            }
+
+            if (swBlue == null)
+            {
+                swBlue = new double[snew.GetLength(0), snew.GetLength(1)];
+            }
+
+            for (int i = 0; i < snew.GetLength(0); i++)
+            {
+                for (int j = 0; j < snew.GetLength(1); j++)
+                {
+                    if (color.Equals("red"))
+                    {
+                        sWmRed[i, j] = snew[i, j];
+                    }else if (color.Equals("green"))
+                    {
+                        swGreen[i, j] = snew[i, j];
+                    }else if (color.Equals("blue"))
+                    {
+                        swBlue[i, j] = snew[i, j];
+                    }
+                }
+            }
             double[,] host_u = svd_host.svd.U.ToArray();
             double[,] host_vt = svd_host.svd.VT.ToArray();
             double[,] host_w = svd_host.get_w();
             double[,] recompo = new double[host_u.GetLength(0), host_u.GetLength(1)];
             recompo = svd_host.perkalian_matrix(host_u, snew);
             recompo = svd_host.perkalian_matrix(recompo, host_vt);
+            for (int i = 0; i < recompo.GetLength(0); i++)
+            {
+                for (int j = 0; j < recompo.GetLength(1); j++)
+                {
+                    hostcolor[i, j] = recompo[i, j];
+                }
+            }
+                return hostcolor;
+        }
+
+        private double[,] Extracted_pso_operation(double[,] hostcolor, double[,] wmcolor, double[,] vtWcolor, Bitmap pic, Bitmap WmPic ,Bitmap vwPic,double[,] sWm)
+        {
+            svd_host = new svd_operation(pic, hostcolor);
+            svd_watermark = new svd_operation(WmPic, wmcolor);
+            svd_operation svd_ww = new svd_operation(vwPic,vtWcolor);
+            double[,] wmP = svd_ww.get_w();
+            double[,] hostP = svd_host.get_w();
+            double[,] newS = new double[WmPic.Width, WmPic.Height];
+            for (int i = 0; i < wmP.GetLength(0); i++)
+            {
+                for (int j = 0; j < wmP.GetLength(1); j++)
+                {
+                    newS[i,j] = (wmP[i,j]-hostP[i,j])/0.0025;
+                }
+            }
+            double[,] wmU = svd_watermark.svd.U.ToArray();
+            double[,] wmVt = svd_watermark.svd.VT.ToArray();
+
+            double[,] recompo = new double[wmU.GetLength(0), wmU.GetLength(1)];
+            recompo = svd_watermark.perkalian_matrix(wmU, newS);
+            recompo = svd_watermark.perkalian_matrix(recompo, wmVt);
+
             for (int i = 0; i < recompo.GetLength(0); i++)
             {
                 for (int j = 0; j < recompo.GetLength(1); j++)
@@ -315,6 +387,108 @@ namespace Watermark
             return res;
         }
 
+        public void extractedImage()
+        {
+            wm = new Bitmap(RDWTWatermark.Image, new Size(RDWTWatermark.Width, RDWTWatermark.Height));
+            host = new Bitmap(RDWTImage.Image, new Size(RDWTImage.Width, RDWTImage.Height));
+            vtwm = new Bitmap(watermarkedImg.Image, new Size(watermarkedImg.Width, watermarkedImg.Height));
 
+            extractedImg.Invoke((MethodInvoker)(() => extractedImg.Image = vtwm));
+            Wmred= new double[wm.Width, wm.Height];
+            Wmgreen = new double[wm.Width, wm.Height];
+            Wmblue = new double[wm.Width, wm.Height];
+            getValueColor(Wmred, Wmgreen, Wmblue, wm);
+
+            Hostred = new double[host.Width, host.Height];
+            Hostgreen = new double[host.Width, host.Height];
+            Hostblue = new double[host.Width, host.Height];
+            getValueColor(Hostred, Hostgreen, Hostblue, host);
+
+            vtWmRed = new double[vtwm.Width, vtwm.Height];
+            vtWmGreen = new double[vtwm.Width, vtwm.Height];
+            vtWmBlue = new double[vtwm.Width, vtwm.Height];
+            getValueColor(vtWmRed, vtWmGreen, vtWmBlue, vtwm);
+
+            rdwt WmRdwt = new rdwt();
+            WmRdwt.rdwtTransform(Wmred);
+            WmRdwt.rdwtTransform(Wmgreen);
+            WmRdwt.rdwtTransform(Wmblue);
+
+            rdwt HostRdwt = new rdwt();
+            HostRdwt.rdwtTransform(Hostred);
+            HostRdwt.rdwtTransform(Hostgreen);
+            HostRdwt.rdwtTransform(Hostblue);
+
+            rdwt WRdwt = new rdwt();
+            WRdwt.rdwtTransform(vtWmRed);
+            WRdwt.rdwtTransform(vtWmGreen);
+            WRdwt.rdwtTransform(vtWmBlue);
+
+            generateImage(Wmred, Wmgreen, Wmblue, wm);
+            generateImage(Hostred, Hostgreen, Hostblue, host);
+            generateImage(vtWmRed, vtWmGreen, vtWmBlue, vtwm);
+
+            extractedImg.Invoke((MethodInvoker)(() => extractedImg.Image = vtwm));
+            //RDWTImage.Image = host;
+            //RDWTWatermark.Image = wm;
+
+            DCT WmDct = new DCT(wm);
+            DCT HostDct = new DCT(host);
+            DCT VtWmDct = new DCT(vtwm);
+
+            WmDct.DCT_Transform(Wmred);
+            DCTTrans.DCT_Transform(Wmgreen);
+            DCTTrans.DCT_Transform(Wmblue);
+            generateImage(Wmred, Wmgreen, Wmblue, wm);
+
+            HostDct.DCT_Transform(Hostred);
+            HostDct.DCT_Transform(Hostgreen);
+            HostDct.DCT_Transform(Hostblue);
+            generateImage(Hostred, Hostgreen, Hostblue, host);
+
+            VtWmDct.DCT_Transform(vtWmRed);
+            VtWmDct.DCT_Transform(vtWmGreen);
+            VtWmDct.DCT_Transform(vtWmBlue);
+            generateImage(vtWmRed, vtWmGreen, vtWmBlue, vtwm);
+
+            extractedImg.Invoke((MethodInvoker)(() => extractedImg.Image = vtwm));
+
+            vtWmRed = Extracted_pso_operation(Hostred, Wmred, vtWmRed, host, wm, vtwm,sWmRed);
+            vtWmGreen = Extracted_pso_operation(Hostgreen, Wmgreen, vtWmGreen, host, wm, vtwm,swGreen);
+            vtWmBlue = Extracted_pso_operation(Hostblue, Wmblue, vtWmBlue, host, wm, vtwm,swBlue);
+            generateImage(vtWmRed, vtWmGreen, vtWmBlue, vtwm);
+
+            DCT vtIDCT = new DCT(vtwm);
+            vtIDCT.InverseDCT(vtWmRed);
+            vtIDCT.InverseDCT(vtWmGreen);
+            vtIDCT.InverseDCT(vtWmBlue);
+            generateImage(vtWmRed, vtWmGreen, vtWmBlue, vtwm);
+            extractedImg.Invoke((MethodInvoker)(() => extractedImg.Image = vtwm));
+
+            int row = vtWmRed.GetLength(0) >> 1;
+            int col = vtWmRed.GetLength(1) >> 1;
+
+
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    Wmred[i, j] = vtWmRed[i, j];
+                    Wmgreen[i, j] = vtWmGreen[i, j];
+                    Wmblue[i, j] = vtWmGreen[i, j];
+                }
+            }
+            rdwt irdwt = new rdwt();
+            irdwt.InverseRDWT(Wmred);
+            irdwt.InverseRDWT(Wmgreen);
+            irdwt.InverseRDWT(Wmblue);
+            generateImage(Wmred, Wmgreen, Wmblue, vtwm);
+            extractedImg.Invoke((MethodInvoker)(() => extractedImg.Image = vtwm));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            extractedImage();
+        }
     }
 }

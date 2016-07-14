@@ -62,9 +62,9 @@ namespace Watermark.control
                     }
                 }
             }
-            double[,] nilai_u = svd.U.ToArray();
-            double[,] hasil = perkalian_matrix(nilai_u, nilai_w);
-            return hasil;
+            //double[,] nilai_u = svd.U.ToArray();
+            //double[,] hasil = perkalian_matrix(nilai_u, nilai_w);
+            return nilai_w;
         }
 
         public double[,] recompotion(Matrix<double>u,Matrix<double>s,Matrix<double>vt)

@@ -45,10 +45,12 @@
             this.watermarkedImg = new System.Windows.Forms.PictureBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.evaluasi = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.mseLbl = new System.Windows.Forms.Label();
             this.psnrLbl = new System.Windows.Forms.Label();
+            this.mseLbl = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OriginalPic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.watermacPic)).BeginInit();
@@ -57,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.extractedImg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.watermarkedImg)).BeginInit();
             this.evaluasi.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -70,16 +73,16 @@
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Location = new System.Drawing.Point(8, 11);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 575);
+            this.groupBox1.Size = new System.Drawing.Size(200, 255);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
             // 
             // svd_pso
             // 
-            this.svd_pso.Location = new System.Drawing.Point(0, 211);
+            this.svd_pso.Location = new System.Drawing.Point(6, 137);
             this.svd_pso.Name = "svd_pso";
-            this.svd_pso.Size = new System.Drawing.Size(84, 56);
+            this.svd_pso.Size = new System.Drawing.Size(174, 44);
             this.svd_pso.TabIndex = 6;
             this.svd_pso.Text = "SVD + PSO + EMBED";
             this.svd_pso.UseVisualStyleBackColor = true;
@@ -87,7 +90,7 @@
             // 
             // rdwthostbtn
             // 
-            this.rdwthostbtn.Location = new System.Drawing.Point(0, 91);
+            this.rdwthostbtn.Location = new System.Drawing.Point(6, 77);
             this.rdwthostbtn.Name = "rdwthostbtn";
             this.rdwthostbtn.Size = new System.Drawing.Size(84, 40);
             this.rdwthostbtn.TabIndex = 5;
@@ -97,7 +100,7 @@
             // 
             // InverseRDWTBTN
             // 
-            this.InverseRDWTBTN.Location = new System.Drawing.Point(0, 339);
+            this.InverseRDWTBTN.Location = new System.Drawing.Point(96, 198);
             this.InverseRDWTBTN.Name = "InverseRDWTBTN";
             this.InverseRDWTBTN.Size = new System.Drawing.Size(84, 40);
             this.InverseRDWTBTN.TabIndex = 4;
@@ -107,7 +110,7 @@
             // 
             // InverseDCTBtn
             // 
-            this.InverseDCTBtn.Location = new System.Drawing.Point(0, 280);
+            this.InverseDCTBtn.Location = new System.Drawing.Point(6, 198);
             this.InverseDCTBtn.Name = "InverseDCTBtn";
             this.InverseDCTBtn.Size = new System.Drawing.Size(84, 40);
             this.InverseDCTBtn.TabIndex = 3;
@@ -117,7 +120,7 @@
             // 
             // DCTBTN
             // 
-            this.DCTBTN.Location = new System.Drawing.Point(0, 151);
+            this.DCTBTN.Location = new System.Drawing.Point(96, 77);
             this.DCTBTN.Name = "DCTBTN";
             this.DCTBTN.Size = new System.Drawing.Size(84, 40);
             this.DCTBTN.TabIndex = 2;
@@ -201,7 +204,7 @@
             // 
             // watermarkedImg
             // 
-            this.watermarkedImg.Location = new System.Drawing.Point(728, 41);
+            this.watermarkedImg.Location = new System.Drawing.Point(728, 42);
             this.watermarkedImg.Name = "watermarkedImg";
             this.watermarkedImg.Size = new System.Drawing.Size(224, 224);
             this.watermarkedImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -230,14 +233,21 @@
             this.evaluasi.TabStop = false;
             this.evaluasi.Text = "evaluasi";
             // 
-            // label1
+            // psnrLbl
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "MSE :";
+            this.psnrLbl.AutoSize = true;
+            this.psnrLbl.Location = new System.Drawing.Point(13, 118);
+            this.psnrLbl.Name = "psnrLbl";
+            this.psnrLbl.Size = new System.Drawing.Size(0, 13);
+            this.psnrLbl.TabIndex = 3;
+            // 
+            // mseLbl
+            // 
+            this.mseLbl.AutoSize = true;
+            this.mseLbl.Location = new System.Drawing.Point(13, 58);
+            this.mseLbl.Name = "mseLbl";
+            this.mseLbl.Size = new System.Drawing.Size(0, 13);
+            this.mseLbl.TabIndex = 2;
             // 
             // label2
             // 
@@ -248,27 +258,41 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "PSNR :";
             // 
-            // mseLbl
+            // label1
             // 
-            this.mseLbl.AutoSize = true;
-            this.mseLbl.Location = new System.Drawing.Point(13, 58);
-            this.mseLbl.Name = "mseLbl";
-            this.mseLbl.Size = new System.Drawing.Size(0, 13);
-            this.mseLbl.TabIndex = 2;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(36, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "MSE :";
             // 
-            // psnrLbl
+            // button3
             // 
-            this.psnrLbl.AutoSize = true;
-            this.psnrLbl.Location = new System.Drawing.Point(13, 118);
-            this.psnrLbl.Name = "psnrLbl";
-            this.psnrLbl.Size = new System.Drawing.Size(0, 13);
-            this.psnrLbl.TabIndex = 3;
+            this.button3.Location = new System.Drawing.Point(6, 31);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(179, 40);
+            this.button3.TabIndex = 7;
+            this.button3.Text = "Ekstraksi Citra";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.button3);
+            this.groupBox4.Location = new System.Drawing.Point(8, 475);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(200, 111);
+            this.groupBox4.TabIndex = 10;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "groupBox4";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1194, 598);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.evaluasi);
             this.Controls.Add(this.extractedImg);
             this.Controls.Add(this.watermarkedImg);
@@ -290,6 +314,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.watermarkedImg)).EndInit();
             this.evaluasi.ResumeLayout(false);
             this.evaluasi.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -317,6 +342,8 @@
         private System.Windows.Forms.Label mseLbl;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 
